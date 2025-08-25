@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Dramatic Sunset Surprise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Dancing+Script&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -24,29 +25,38 @@
 
     #message {
       position: absolute;
-      bottom: 5%;
+      bottom: 6%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(20px);
       color: #fff;
-      font-family: 'Georgia', serif;
-      font-size: clamp(1rem, 4vw, 2.2rem);
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.2rem, 4vw, 2.4rem);
       text-align: center;
-      text-shadow: 0 0 10px rgba(255, 100, 0, 0.8),
-                   0 0 20px rgba(255, 50, 0, 0.5);
+      text-shadow: 0 0 15px rgba(255, 140, 0, 0.8),
+                   0 0 25px rgba(255, 90, 0, 0.6);
       opacity: 0;
-      transition: opacity 2s ease-in;
+      transition: opacity 2s ease-in, transform 2s ease-in;
       width: 90%;
-      max-width: 800px;
-      padding: 0 10px;
+      max-width: 850px;
+      padding: 0 15px;
     }
 
     #message.show {
       opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #message span {
+      display: block;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1em;
+      margin-top: 0.5em;
+      color: #ffd5a1;
     }
 
     @media (max-width: 600px) {
       #message {
-        font-size: clamp(0.9rem, 3.5vw, 1.5rem);
+        font-size: clamp(1rem, 4vw, 1.6rem);
       }
     }
   </style>
@@ -54,7 +64,8 @@
 <body>
   <canvas id="sunsetCanvas"></canvas>
   <div id="message">
-    My darling, your radiance eclipses every sunset. I love you eternally.
+    My darling, your radiance eclipses every sunset. 
+    <span>I love you eternally.</span>
   </div>
   <script>
     const canvas = document.getElementById('sunsetCanvas');
@@ -71,13 +82,15 @@
     let sunY = canvas.height * 0.15;
     let time = 0;
 
-    const clouds = [
-      { x: canvas.width * 0.125, y: canvas.height * 0.25, width: canvas.width * 0.25, height: canvas.height * 0.083, opacity: 0.5 },
-      { x: canvas.width * 0.375, y: canvas.height * 0.167, width: canvas.width * 0.3125, height: canvas.height * 0.1, opacity: 0.4 },
-      { x: canvas.width * 0.625, y: canvas.height * 0.3, width: canvas.width * 0.275, height: canvas.height * 0.067, opacity: 0.6 }
-    ];
+    const clouds = Array.from({ length: 5 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * (canvas.height * 0.4),
+      width: canvas.width * (0.15 + Math.random() * 0.2),
+      height: canvas.height * (0.05 + Math.random() * 0.08),
+      opacity: 0.4 + Math.random() * 0.3
+    }));
 
-    const stars = Array.from({ length: 50 }, () => ({
+    const stars = Array.from({ length: 70 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * (canvas.height / 2),
       radius: Math.random() * (canvas.height * 0.0025),
@@ -85,25 +98,24 @@
     }));
 
     function drawSky() {
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height / 2);
-      gradient.addColorStop(0, `hsl(240, 60%, ${60 - time * 0.4}%)`);
-      gradient.addColorStop(0.3, `hsl(20, 80%, ${50 - time * 0.3}%)`);
-      gradient.addColorStop(0.7, `hsl(10, 90%, ${40 - time * 0.2}%)`);
-      gradient.addColorStop(1, `hsl(0, 100%, ${30 - time * 0.1}%)`);
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, `hsl(230, 70%, ${50 - time * 0.3}%)`);
+      gradient.addColorStop(0.5, `hsl(25, 90%, ${55 - time * 0.2}%)`);
+      gradient.addColorStop(0.8, `hsl(10, 80%, ${30 - time * 0.1}%)`);
+      gradient.addColorStop(1, `hsl(0, 60%, ${15 - time * 0.05}%)`);
       ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     function drawClouds() {
       clouds.forEach(cloud => {
         const cloudGradient = ctx.createLinearGradient(cloud.x, cloud.y, cloud.x, cloud.y + cloud.height);
-        cloudGradient.addColorStop(0, `rgba(255, 255, 255, ${cloud.opacity * (1 - time * 0.01)})`);
-        cloudGradient.addColorStop(1, `rgba(255, 150, 0, ${cloud.opacity * (1 - time * 0.01)})`);
+        cloudGradient.addColorStop(0, `rgba(255, 255, 255, ${cloud.opacity * (1 - time * 0.008)})`);
+        cloudGradient.addColorStop(1, `rgba(255, 180, 100, ${cloud.opacity * (1 - time * 0.008)})`);
         ctx.beginPath();
-        ctx.ellipse(cloud.x + cloud.width / 2, cloud.y + cloud.height / 2, cloud.width / 2, cloud.height / 2, 0, 0, Math.PI * 2);
+        ctx.ellipse(cloud.x, cloud.y, cloud.width, cloud.height, 0, 0, Math.PI * 2);
         ctx.fillStyle = cloudGradient;
-        ctx.fill();
-        ctx.filter = 'blur(10px)';
+        ctx.filter = 'blur(15px)';
         ctx.fill();
         ctx.filter = 'none';
       });
@@ -111,7 +123,8 @@
 
     function drawStars() {
       stars.forEach(star => {
-        star.opacity = Math.min(1, time * 0.02);
+        // twinkling effect
+        star.opacity = Math.min(1, time * 0.02) * (0.5 + Math.random() * 0.5);
         ctx.beginPath();
         ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
@@ -122,22 +135,22 @@
     function drawGround() {
       ctx.beginPath();
       ctx.moveTo(0, canvas.height / 2);
-      ctx.quadraticCurveTo(canvas.width / 4, canvas.height / 2 - (canvas.height * 0.083), canvas.width / 2, canvas.height / 2);
-      ctx.quadraticCurveTo(3 * canvas.width / 4, canvas.height / 2 + (canvas.height * 0.083), canvas.width, canvas.height / 2);
+      ctx.quadraticCurveTo(canvas.width / 4, canvas.height / 2 - (canvas.height * 0.08), canvas.width / 2, canvas.height / 2);
+      ctx.quadraticCurveTo(3 * canvas.width / 4, canvas.height / 2 + (canvas.height * 0.08), canvas.width, canvas.height / 2);
       ctx.lineTo(canvas.width, canvas.height);
       ctx.lineTo(0, canvas.height);
-      ctx.fillStyle = '#1a2f1a';
+      ctx.fillStyle = '#0b1c0b';
       ctx.fill();
     }
 
     function drawSun() {
-      const sunGradient = ctx.createRadialGradient(canvas.width / 2, sunY, canvas.height * 0.0375, canvas.width / 2, sunY, canvas.height * 0.1);
-      sunGradient.addColorStop(0, `hsl(60, 100%, ${80 - time * 0.3}%)`);
-      sunGradient.addColorStop(0.5, `hsl(40, 90%, ${60 - time * 0.2}%)`);
-      sunGradient.addColorStop(1, `rgba(255, 100, 0, ${0.3 - time * 0.005})`);
+      const sunGlow = ctx.createRadialGradient(canvas.width / 2, sunY, 0, canvas.width / 2, sunY, canvas.height * 0.15);
+      sunGlow.addColorStop(0, `hsla(50, 100%, ${85 - time * 0.3}%, 1)`);
+      sunGlow.addColorStop(0.5, `hsla(40, 100%, ${65 - time * 0.2}%, 0.6)`);
+      sunGlow.addColorStop(1, `hsla(20, 100%, 50%, 0)`);
+      ctx.fillStyle = sunGlow;
       ctx.beginPath();
-      ctx.arc(canvas.width / 2, sunY, canvas.height * 0.0625, 0, Math.PI * 2);
-      ctx.fillStyle = sunGradient;
+      ctx.arc(canvas.width / 2, sunY, canvas.height * 0.08, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -150,13 +163,13 @@
       drawSun();
 
       sunY += canvas.height * 0.0005;
-      time += 0.3;
+      time += 0.25;
 
-      if (sunY > canvas.height / 2 + (canvas.height * 0.083)) {
+      if (sunY > canvas.height / 2 + (canvas.height * 0.1)) {
         sunY = canvas.height * 0.15;
         time = 0;
         stars.forEach(star => star.opacity = 0);
-        message.classList.remove('show'); // reset fade for looping
+        message.classList.remove('show');
       }
 
       if (time > 10 && !message.classList.contains('show')) {
